@@ -2,12 +2,18 @@
 
 // Install and import express from npm : npm install express
 import express from "express";
+import { readFile } from "fs";
 
 // Create a const app express
 const app = express()
 
-// Create the first route GET
-app.get('/', (req, res) => {
+// Permet de lire le JSON dans le body - pour parser les requêtes JSON (nécessaire pour accéder au corps de la requête)
+app.use(express.json())
+
+
+
+// Les Routes GET
+app.get('/article', (req, res) => {
    res.send(`
       <!DOCTYPE html>
       <html>
@@ -18,26 +24,47 @@ app.get('/', (req, res) => {
       </body>
       </html>
    `)
+
+   // readFile('web-express.html', (error, data) => {
+   //    if (error) {
+   //       res.writeHead(500)
+   //       return res.end('Erreur server')
+   //    }
+
+   //    res.writeHead(201, {'Content-Type' : 'application/json'})
+   //    res.end(data)
+   // })
 })
 
-// Route bonjour
-app.get('/bonjour', (req, res) => {
-   res.send('Bonjour')
+// Liste des utilsateurs (GET : Lire une ressource)
+app.get('/users', (req, res) => {
+   res.send('Listes des utilsateurs')
 })
 
-// Route name in dynamic URL
-app.get('/user/:name', (req, res) => {
-   const name = req.params.name
-   res.send(`Bonjour ${name}`)
+// Récuprer un utilsateur via son id
+app.get('/users/:id', (req, res) => {
+   const user = req.params.id
+   res.send(`Utilisateurs avec id : ${user}`)
 })
 
-// Retrun a json file
+app.get('/users/:email', (req, res) => {
+   const user_email = req.params.email
+   res.send(`Votre email est : ${user_email}`)
+})
+
 app.get('/api/users', (req, res) => {
    res.json({
       name: 'Polina',
       age: 20
    })
 })
+
+// Comment Créer une ressource (POST)
+app.post('/article', (req, res) => {
+   const { article } = req.body
+   res.status(201).send(`Article ${article} crée !`)
+})
+
 
 // Create middlewares
 
