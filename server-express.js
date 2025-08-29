@@ -2,7 +2,6 @@
 
 // Install and import express from npm : npm install express
 import express from "express";
-import { readFile } from "fs";
 
 // Create a const app express
 const app = express()
@@ -13,7 +12,7 @@ app.use(express.json())
 
 
 // Les Routes GET
-app.get('/article', (req, res) => {
+app.get('/', (req, res) => {
    res.send(`
       <!DOCTYPE html>
       <html>
@@ -24,16 +23,6 @@ app.get('/article', (req, res) => {
       </body>
       </html>
    `)
-
-   // readFile('web-express.html', (error, data) => {
-   //    if (error) {
-   //       res.writeHead(500)
-   //       return res.end('Erreur server')
-   //    }
-
-   //    res.writeHead(201, {'Content-Type' : 'application/json'})
-   //    res.end(data)
-   // })
 })
 
 // Liste des utilsateurs (GET : Lire une ressource)
@@ -59,14 +48,55 @@ app.get('/api/users', (req, res) => {
    })
 })
 
-// Comment Créer une ressource (POST)
+// POST - Créer une ressource 
 app.post('/article', (req, res) => {
-   const { article } = req.body
-   res.status(201).send(`Article ${article} crée !`)
+   // Afficher ce que POSTMAN envoi
+   console.log(req.body);
+   const { name } = req.body
+   res.status(201).send(`Article ${name} crée !`)
 })
 
+// PUT - modifier une ressource
+app.put('/article/:name', (req, res) => {
+  const { name } = req.params;
+  const { nom } = req.body;
+  res.send(`Article ${name} mis à jour avec le nom : ${nom}`);
+});
+app.put('/article/:id', (req, res) => {
+  const { id } = req.params;
+  const { nom } = req.body;
+  res.send(`Article ${id} mis à jour avec le nom : ${nom}`);
+});
 
-// Create middlewares
+// DELETE - supprimer une ressource
+app.delete('/article/:id', (req, res) => {
+   const { id } = req.params;
+   res.send(`Article ${id} supprimé avec succes !`)
+})
+app.delete('/article/:name', (req, res) => {
+   const { name } = req.params;
+   res.send(`Article ${name} supprimé avec succes !`)
+})
+
+// ================ Create middlewares ================ //
+
+// Creer une function qui verifie la cle passer en url 
+function verifyKey(req, res, next) {
+   if (req.query.key === '1234') {
+      next()
+   } 
+   res.status(403).send('Clé daccès invalide')
+}
+
+app.get('/admin', verifyKey, (req, res) => {
+   res.send('Welcome Admin')
+})
+
+// Middleware Global
+app.use((req, res, next) => {
+  console.log(`Requête reçue : ${req.method} ${req.url}`);
+  next(); // passe au prochain handler
+});
 
 // Create a PORT
 const PORT = 3000

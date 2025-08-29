@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon server-express.js"
+    "dev": "nodemon exercice.js"
   },
   "author": "mervydevmedia",
   "license": "MIT",
